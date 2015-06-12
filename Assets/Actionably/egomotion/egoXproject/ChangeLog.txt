@@ -1,0 +1,23 @@
+EgoXproject ChangeLog
+
+---------- 1.1.0 ----------
+- Feature: Added support for additional file types including Core Data Models, and Asset Catelogs.
+- Feature: Can now add container files and folders.
+- Feature: EgoXproject now runs at a much later stage during PostProcessBuild to ensure its changes are not destroyed by other plugins. Callback order value is now 5000.
+- Bug Fix: Fixed critical bug introduced with 1.0.3 that made plist files somtimes not readable by Xcode
+
+---------- 1.0.3 ----------
+- Feature: Now works with Unity 5 generated iOS projects
+- Feature: Updated to handle the Unity 4.6.1 and Unity 5 generated Info.plist files that are missing the DTD element.
+
+---------- 1.0.2 ----------
+- Bug Fix: Fixed bug where append builds could become corrupted.
+- Bug Fix: Fixed bug where bundle files could not be copied to the iOS project folder.
+- Bug Fix: Unwanted files are no longer copied to the iOS project folder (such as meta files).
+- Bug Fix: Bundle files can now be copied to the Xcode project folder
+
+---------- 1.0.1 ----------
+- Bug Fix: Misc bug fixes
+
+---------- 1.0 ----------
+- Initial Release
