@@ -17,6 +17,9 @@ public class MainController : Singleton<MainController>
 	public AudioSource Ding;
 	public Text SoundButtonText;
 
+	// google analytics
+	public GoogleAnalyticsV3 googleAnalytics;
+
 	/* Actionably Callbacks */
 	// actionably callback function when the number of messages changes.
 	public void OnMessageCountChange (int count)
