@@ -62,8 +62,6 @@ static NSString* theFunctionName = NULL;
         return;
     }
     
-    NSArray *recipents = @[phoneNumber];
-    
     MFMessageComposeViewController *messageController = [[MFMessageComposeViewController alloc] init];
     messageController.messageComposeDelegate = smsDelegate;
     if (imageFile != NULL) {
@@ -75,7 +73,10 @@ static NSString* theFunctionName = NULL;
         printf("attached %d", didAttachImage);
     }
     
-    [messageController setRecipients:recipents];
+    if (phoneNumber != nil) {
+        NSArray *recipents = @[phoneNumber];
+        [messageController setRecipients:recipents];
+    }
     [messageController setBody:message];
     
     // Present message view controller on screen

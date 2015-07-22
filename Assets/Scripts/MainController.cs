@@ -59,6 +59,7 @@ public class MainController : Singleton<MainController>
 		}
 
 		Actionably.Init ("55771e9d5e50c00b00f570a9", "MainController");
+
 	}
 	
 	// Update is called once per frame
@@ -84,14 +85,20 @@ public class MainController : Singleton<MainController>
 		
 		if (panelName == WelcomePanel.name) {
 			WelcomePanel.SetActive (true);
+			googleAnalytics.LogScreen (new AppViewHitBuilder ()
+			                          .SetScreenName ("Welcome Panel"));
 		}
 
 		if (panelName == MainPanel.name) {
 			MainPanel.SetActive (true);
+			googleAnalytics.LogScreen (new AppViewHitBuilder ()
+			                          .SetScreenName ("Main Panel"));
 		}
 
 		if (panelName == ConfigPanel.name) {
 			ConfigPanel.SetActive (true);
+			googleAnalytics.LogScreen (new AppViewHitBuilder ()
+			                          .SetScreenName ("Config Panel"));
 		}
 	}
 
@@ -117,12 +124,20 @@ public class MainController : Singleton<MainController>
 		if (PlayerPrefs.GetInt ("sound") == 0) {
 			Ding.Play ();
 		}
+
+		string eventAction = PlayerPrefs.GetString ("text" + countName);
+		googleAnalytics.LogEvent (new EventHitBuilder ()
+		                         .SetEventCategory ("IncrementCount")
+		                         .SetEventAction (eventAction));
+
 	}
 
 
 	public void InviteFriends ()
 	{
 		Actionably.OpenMessages ();
+		googleAnalytics.LogScreen (new AppViewHitBuilder ()
+		                           .SetScreenName ("Invite Friends"));
 
 	}
 

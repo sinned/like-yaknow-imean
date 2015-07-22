@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>EgoPBXProjVersion</key>
+    <integer>1</integer>
+    <key>Frameworks</key>
+    <dict>
+      <key>libz.dylib</key>
+      <dict>
+        <key>Required</key>
+        <true />
+        <key>Path</key>
+        <string>usr/lib/libz.dylib</string>
+        <key>SourceTree</key>
+        <string>SDKRoot</string>
+      </dict>
+      <key>libsqlite3.dylib</key>
+      <dict>
+        <key>Required</key>
+        <true />
+        <key>Path</key>
+        <string>usr/lib/libsqlite3.dylib</string>
+        <key>SourceTree</key>
+        <string>SDKRoot</string>
+      </dict>
+      <key>SystemConfiguration.framework</key>
+      <dict>
+        <key>Required</key>
+        <true />
+        <key>Path</key>
+        <string>System/Library/Frameworks/SystemConfiguration.framework</string>
+        <key>SourceTree</key>
+        <string>SDKRoot</string>
+      </dict>
+      <key>AdSupport.framework</key>
+      <dict>
+        <key>Required</key>
+        <true />
+        <key>Path</key>
+        <string>System/Library/Frameworks/AdSupport.framework</string>
+        <key>SourceTree</key>
+        <string>SDKRoot</string>
+      </dict>
+      <key>CoreData.framework</key>
+      <dict>
+        <key>Required</key>
+        <true />
+        <key>Path</key>
+        <string>System/Library/Frameworks/CoreData.framework</string>
+        <key>SourceTree</key>
+        <string>SDKRoot</string>
+      </dict>
+    </dict>
+    <key>Scripts</key>
+    <dict />
+    <key>Files</key>
+    <dict />
+    <key>BuildSettings</key>
+    <dict />
+  </dict>
+</plist>

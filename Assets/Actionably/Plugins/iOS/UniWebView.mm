@@ -730,7 +730,7 @@ void _UniWebViewSetBounces(const char *name, bool bounces) {
 void _UniWebViewEvaluatingJavaScript(const char *name, const char *javascript, BOOL callback) {
     NSString *webViewName = UniWebViewMakeNSString(name);
     NSString *jsString = UniWebViewMakeNSString(javascript);
-    NSLog(@"webViewName:%@, eval js:%@",webViewName,jsString);
+    //NSLog(@"webViewName:%@, eval js:%@",webViewName,jsString);
     [[UniWebViewManager sharedManager] webViewName:webViewName evaluatingJavaScript:jsString shouldCallBack:callback];
 }
 

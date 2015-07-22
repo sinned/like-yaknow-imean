@@ -14,19 +14,25 @@ public class Actionably : Singleton<Actionably>
 	public static void Init (string apiKey, string callbackObjectName)
 	{
 		if (apiKey == "your-test-id-here") {
-
+			
 			Debug.LogError ("*** ERROR ERROR ERROR *************************************\n Please use your own Actionably API Key. *** ");
 			Debug.LogError ("Substituting Actionably Test ID for now. If you launch with this ID you will be eaten by a grue.");
-
+			
 			apiKey = "5511be18efd37d70072f3a95";
-
+			
 		}
+
 		Instance.InitInternal (apiKey, callbackObjectName);
 	}
 
 	public static void OpenMessages ()
 	{
 		Instance.OpenMessagesInternal ();
+	}
+
+	public static void LogEvent (string eventName, Dictionary<string, string> data)
+	{
+		Instance.Log (eventName, data);
 	}
 
 	private void InitInternal (string apiKey, string callbackObjectName)
@@ -52,7 +58,13 @@ public class Actionably : Singleton<Actionably>
 	void Start ()
 	{
 		//TODO: when should we should do this.
+#if UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7 
+		NotificationServices.RegisterForRemoteNotificationTypes (RemoteNotificationType.Alert | 
+		                                                         RemoteNotificationType.Badge | 
+		                                                         RemoteNotificationType.Sound);
+#else
 		UnityEngine.iOS.NotificationServices.RegisterForNotifications (UnityEngine.iOS.NotificationType.Alert | UnityEngine.iOS.NotificationType.Badge | UnityEngine.iOS.NotificationType.Sound);
+#endif
 
 		_webView = gameObject.AddComponent<UniWebView> ();
 		_webView.insets = new UniWebViewEdgeInsets (0, 0, 0, 0);
@@ -63,7 +75,11 @@ public class Actionably : Singleton<Actionably>
 	void  FixedUpdate ()
 	{
 		if (!_tokenSent) {
+#if UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
+			byte[] token = NotificationServices.deviceToken;
+#else
 			byte[] token = UnityEngine.iOS.NotificationServices.deviceToken;
+#endif
 			if (token != null) {
 				string tokenString = System.BitConverter.ToString (token).Replace ("-", "").ToLower ();
 				SavePushToken (tokenString);
@@ -118,10 +134,15 @@ public class Actionably : Singleton<Actionably>
 			if (message.args.ContainsKey ("imageUrl")) {
 				imageUrl = message.args ["imageUrl"];
 			}
-			SendSmsMessage (message.args ["phoneNumber"], message.args ["message"],
+			string phoneNumber = null;
+			if (message.args.ContainsKey ("phoneNumber")) {
+				phoneNumber = message.args ["phoneNumber"];
+			}
+			SendSmsMessage (phoneNumber, message.args ["message"],
 			               imageUrl).Then ((string result) => {
 				bool success = "sent".Equals (result);
-				var js = "sendSmsMessageFinished('" + message.args ["phoneNumber"] + "',"
+				var phoneNumberString = phoneNumber == null ? "null" : "'" + phoneNumber + "'";
+				var js = "sendSmsMessageFinished(" + phoneNumberString + ","
 					+ success.ToString ().ToLower () + ")";
 				_webView.EvaluatingJavaScript (js);
 			});
@@ -224,7 +245,19 @@ public class Actionably : Singleton<Actionably>
 			_webView.Load ();
 		}
 	}
-	
+
+	private Promise<string> Log (string eventName, Dictionary<string, string> data)
+	{
+		JSONClass jdata = new JSONClass ();
+		if (data != null) {
+			foreach (KeyValuePair<string, string> entry in data) {
+				jdata [entry.Key] = entry.Value;
+			}
+		}
+
+		return JsonPost ("logItems", jdata.ToString (), "/" + WWW.EscapeURL (eventName));
+	}
+
 	private Promise<string> FindShareCount (bool firstTime)
 	{
 		string urlFragement = "shares/findShareCount";
@@ -235,7 +268,7 @@ public class Actionably : Singleton<Actionably>
 		if (firstTime) {
 			data ["firstTime"] = firstTime.ToString ();
 		}
-		JsonPost (urlFragement, data.ToString ())
+		JsonPost (urlFragement, data.ToString (), null)
 			.Then (jsonString => {
 			deferred.Resolve (jsonString);
 		});
@@ -246,7 +279,7 @@ public class Actionably : Singleton<Actionably>
 	{
 		JSONClass data = new JSONClass ();
 		data ["pushToken"] = pushToken;
-		return JsonPost ("savePushToken", data.ToString ());
+		return JsonPost ("savePushToken", data.ToString (), null);
 	}
 	
 	private Promise<string> ImageFetch (string url)
@@ -280,19 +313,24 @@ public class Actionably : Singleton<Actionably>
 		}
 	}
 	
-	private string BuildUrl (string urlFragment)
+	private string BuildUrl (string urlFragment, string extraUrlData)
 	{
-		return GetBaseUrl () + "/" + urlFragment + "/" + _apiKey + "/" + SystemInfo.deviceUniqueIdentifier;
+		var url = GetBaseUrl () + "/" + urlFragment + "/" + _apiKey + "/" + SystemInfo.deviceUniqueIdentifier;
+		if (extraUrlData != null) {
+			return url + extraUrlData;
+		} else {
+			return url;
+		}
 	}
 	
 	private string BuildUrlWithContactPermissionAndPlatform (string urlFragment)
 	{
-		return BuildUrl (urlFragment) + "/" + ActionablyPlugin.getContactStatus () + "/" + Application.platform;
+		return BuildUrl (urlFragment, "/" + ActionablyPlugin.getContactStatus () + "/" + Application.platform);
 	}
 	
-	private Promise<string> JsonPost (string urlFragment, string data)
+	private Promise<string> JsonPost (string urlFragment, string data, string extraUrlData)
 	{
-		string url = BuildUrl (urlFragment);
+		string url = BuildUrl (urlFragment, extraUrlData);
 		Dictionary<string,string> headers = new Dictionary<string,string> ();
 		headers.Add ("Content-Type", "application/json");
 		byte[] pData = Encoding.ASCII.GetBytes (data.ToCharArray ());

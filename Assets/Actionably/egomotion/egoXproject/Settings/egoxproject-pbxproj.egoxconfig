@@ -9,9 +9,15 @@
     <key>Configurations</key>
     <dict>
       <key>Default</key>
-      <dict />
+      <dict>
+        <key>Assets/Actionably/egomotion/egoXproject/Data/Default.egopbx</key>
+        <true />
+      </dict>
     </dict>
     <key>Settings</key>
-    <dict />
+    <dict>
+      <key>Enabled</key>
+      <true />
+    </dict>
   </dict>
 </plist>
